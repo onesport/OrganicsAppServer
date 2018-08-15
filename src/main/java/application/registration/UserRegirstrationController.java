@@ -1,7 +1,5 @@
 package application.registration;
 
-import application.DbUtils;
-import application.registration.UserDetails;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -46,7 +44,7 @@ public class UserRegirstrationController {
             Gson gson = new GsonBuilder().create();
             UserDetails userDetails =gson.fromJson(targetReader,UserDetails.class);
             ////TODO check if user id is already taken
-            Integer result = DbUtils.addNewRegistration(userDetails, connection);
+            Integer result = RegistrationDbUtils.addNewRegistration(userDetails, connection);
             if(result!=null) {
                 JsonObject jsonObject=new JsonObject();
                 jsonObject.addProperty("success",result);
@@ -63,7 +61,7 @@ public class UserRegirstrationController {
     @RequestMapping(value = "/checkuseravailability", method = RequestMethod.GET)
     public ResponseEntity<String> checkIfUserIdIsAvailable(@RequestParam(value = "email") String email){
 
-        if(DbUtils.checkuserIdaAvailability(email,connection)){
+        if(RegistrationDbUtils.checkuserIdaAvailability(email,connection)){
             JsonObject jsonObject=new JsonObject();
             jsonObject.addProperty("success","id_not_already_taken");
             return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
