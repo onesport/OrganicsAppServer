@@ -1,6 +1,7 @@
 package application.orders;
 
 import com.google.gson.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,11 +53,19 @@ public class OrderController {
             if(asJsonArray.size()==0){
                 throw new JsonParseException("orders not found");
             }
-            if(asJsonArray.size()>=0) {
+            if(asJsonArray.size()>=10) {
                 throw new JsonParseException("not more than 10 orders can be placed");
             }
             ////todo verify that the order keys are present live and the count is valid
-//            OrderDbUtils.addnewOrder(connection,)
+            Integer integer = OrderDbUtils.addnewOrder(connection, details, "order palced at " + System.currentTimeMillis(), userid);
+            if(integer==null){
+                JsonObject jsonObject=new JsonObject();
+                jsonObject.addProperty("error","order cannot be placed");
+                return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
+            }
+            JsonObject jsonObject=new JsonObject();
+            jsonObject.addProperty("success",integer);
+            return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
 
         }catch (JsonParseException e){
 

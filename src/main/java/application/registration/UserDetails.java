@@ -17,9 +17,6 @@ public class UserDetails {
     @SerializedName(PHONE_NO)
     private String phoneNo;
 
-    @SerializedName(USER_ID)
-    private String userId;
-
 
     public void validate() throws Exception{
         if(name==null){
@@ -31,14 +28,11 @@ public class UserDetails {
         if(phoneNo==null){
             throw new RuntimeException("phone number cannot be null");
         }
-        if(userId==null){
-            throw new RuntimeException("user id cannot be null");
-        }
     }
 
     @Override
     public String toString() {
-        return "{"+NAME+":"+name+","+EMAIL_ID+":"+email+","+PHONE_NO+":"+phoneNo+","+USER_ID+":"+userId;
+        return "{"+NAME+":"+name+","+EMAIL_ID+":"+email+","+PHONE_NO+":"+phoneNo+"}";
     }
 
     public void setName(String name) {
@@ -60,12 +54,5 @@ public class UserDetails {
     }
     public String getPhoneNo(){
         return phoneNo;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-    public String getUserId(){
-        return userId;
     }
 }

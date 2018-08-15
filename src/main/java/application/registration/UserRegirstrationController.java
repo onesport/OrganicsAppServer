@@ -1,6 +1,6 @@
-package application;
+package application.registration;
 
-import application.fileutils.Fileutils;
+import application.DbUtils;
 import application.registration.UserDetails;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.sql.Connection;
@@ -39,7 +38,7 @@ public class UserRegirstrationController {
     }
 
     //sample json
-    //{"name":"jenison","email_id":"jenisongracious@gmail.com","phone_no":"9585508668","userid":"jenisonleo"}
+    //{"name":"jenison","email_id":"jenisongracious@gmail.com","phone_no":"9585508668"}
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<String> registerUser(@RequestBody byte[] data){
         InputStream is = new ByteArrayInputStream(data);
@@ -47,9 +46,11 @@ public class UserRegirstrationController {
             Gson gson = new GsonBuilder().create();
             UserDetails userDetails =gson.fromJson(targetReader,UserDetails.class);
             ////TODO check if user id is already taken
-            long result = DbUtils.addNewRegistration(userDetails, connection);
-            if(result==1L) {
-                return ResponseEntity.status(HttpStatus.OK).build();
+            Integer result = DbUtils.addNewRegistration(userDetails, connection);
+            if(result!=null) {
+                JsonObject jsonObject=new JsonObject();
+                jsonObject.addProperty("success",result);
+                return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
             }else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -60,12 +61,16 @@ public class UserRegirstrationController {
     }
 
     @RequestMapping(value = "/checkuseravailability", method = RequestMethod.GET)
-    public ResponseEntity<String> checkIfUserIdIsAvailable(@RequestParam(value = "userid") String userId){
+    public ResponseEntity<String> checkIfUserIdIsAvailable(@RequestParam(value = "email") String email){
 
-        if(DbUtils.checkuserIdaAvailability(userId,connection)){
-            return new ResponseEntity<String>("id_not_already_taken",HttpStatus.OK);
+        if(DbUtils.checkuserIdaAvailability(email,connection)){
+            JsonObject jsonObject=new JsonObject();
+            jsonObject.addProperty("success","id_not_already_taken");
+            return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
         }else {
-            return new ResponseEntity<String>("id_already_taken",HttpStatus.OK);
+            JsonObject jsonObject=new JsonObject();
+            jsonObject.addProperty("success","id_already_taken");
+            return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
         }
     }
 
