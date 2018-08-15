@@ -1,4 +1,4 @@
-package application;
+package application.registration;
 
 import application.registration.UserDetails;
 
