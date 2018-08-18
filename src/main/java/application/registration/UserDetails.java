@@ -18,6 +18,7 @@ public class UserDetails {
     private String phoneNo;
 
 
+    
     public void validate() throws Exception{
         if(name==null){
             throw new RuntimeException("name cannot be null");
