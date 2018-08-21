@@ -1,38 +1,29 @@
-package application.registration;
+package com.onesport.organicappserver.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.onesport.organicappserver.entity.UserDetailsEntity;
+import com.onesport.organicappserver.service.UserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 @RestController
 public class UserRegirstrationController {
-    private Connection connection = null;
-    
-    public UserRegirstrationController(){
-        System.out.println("init");
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost/mysql", "root", "*****");
-            if (connection == null) {
-                System.out.println("connection null");
-            } else {
-                System.out.println("connection not null");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
-    @RequestMapping(value = "/hello", method = RequestMethod.GET)
-    public String sayHello(@RequestParam(value = "name") String name) {
-        return "Hello " + name + "!";
+    @Autowired
+    private UserDetailsService _userDetailsService;
+
+    @RequestMapping(value = "/ping-user", method = RequestMethod.GET)
+    public ResponseEntity<String> ping(){
+        return new ResponseEntity<String>("pong-user".toString(), HttpStatus.OK);
     }
 
     //sample json
@@ -42,13 +33,13 @@ public class UserRegirstrationController {
         InputStream is = new ByteArrayInputStream(data);
         try(Reader targetReader = new InputStreamReader(is)) {
             Gson gson = new GsonBuilder().create();
-            UserDetails userDetails =gson.fromJson(targetReader,UserDetails.class);
+            UserDetailsEntity userDetails =gson.fromJson(targetReader,UserDetailsEntity.class);
             ////TODO check if user id is already taken
-            Integer result = RegistrationDbUtils.addNewRegistration(userDetails, connection);
+            Integer result = _userDetailsService.SaveUserDetails(userDetails);
             if(result!=null) {
                 JsonObject jsonObject=new JsonObject();
                 jsonObject.addProperty("success",result);
-                return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
+                return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.OK);
             }else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -61,7 +52,7 @@ public class UserRegirstrationController {
     @RequestMapping(value = "/checkuseravailability", method = RequestMethod.GET)
     public ResponseEntity<String> checkIfUserIdIsAvailable(@RequestParam(value = "email") String email){
 
-        if(RegistrationDbUtils.checkuserIdaAvailability(email,connection)){
+        if(_userDetailsService.FindByEmail(email)){
             JsonObject jsonObject=new JsonObject();
             jsonObject.addProperty("success","id_not_already_taken");
             return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
@@ -71,10 +62,4 @@ public class UserRegirstrationController {
             return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
         }
     }
-
-
-
-
-
-
 }

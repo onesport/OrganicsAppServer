@@ -1,13 +1,12 @@
-package application;
+package com.onesport.organicappserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JeyOrganicsApplication {
+public class OrganicappserverApplication {
 
     public static void main(String[] args) {
-        System.out.print("hello");
-        SpringApplication.run(JeyOrganicsApplication.class, args);
+        SpringApplication.run(OrganicappserverApplication.class, args);
     }
 }
