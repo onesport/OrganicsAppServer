@@ -40,16 +40,16 @@ public class UserDetailsEntity {
     }
 
     public String getPhoneNo() {
-        return phoneNo;
+        return phoneno;
     }
 
     public void setPhoneNo(String phoneNo) {
-        this.phoneNo = phoneNo;
+        this.phoneno = phoneNo;
     }
 
     @Column(name = "email")
     private String email;
 
-    @Column(name = "phone_no")
-    private String phoneNo;
+    @Column(name = "phoneno")
+    private String phoneno;
 }

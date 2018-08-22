@@ -22,7 +22,7 @@ public class UserDetailsService {
     public Boolean FindByEmail(String email){
         UserDetailsEntity _userDetails =  _userDetailsRepository.findByEmail(email);
 
-        if(_userDetails !=null){
+        if(_userDetails ==null){
             return true;
         }
         return false;

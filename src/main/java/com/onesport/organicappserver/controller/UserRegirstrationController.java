@@ -34,9 +34,13 @@ public class UserRegirstrationController {
         try(Reader targetReader = new InputStreamReader(is)) {
             Gson gson = new GsonBuilder().create();
             UserDetailsEntity userDetails =gson.fromJson(targetReader,UserDetailsEntity.class);
-            ////TODO check if user id is already taken
-            Integer result = _userDetailsService.SaveUserDetails(userDetails);
-            if(result!=null) {
+            Integer result = 0;
+
+            if(checkAvailability(userDetails.getEmail())){
+                result = _userDetailsService.SaveUserDetails(userDetails);
+            }
+
+            if(result!=0) {
                 JsonObject jsonObject=new JsonObject();
                 jsonObject.addProperty("success",result);
                 return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.OK);
@@ -49,10 +53,10 @@ public class UserRegirstrationController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @RequestMapping(value = "/checkuseravailability", method = RequestMethod.GET)
-    public ResponseEntity<String> checkIfUserIdIsAvailable(@RequestParam(value = "email") String email){
+    @RequestMapping(value = "/checkuseravailability/{email}", method = RequestMethod.GET)
+    public ResponseEntity<String> checkIfUserIdIsAvailable(@PathVariable String email){
 
-        if(_userDetailsService.FindByEmail(email)){
+        if(checkAvailability(email)){
             JsonObject jsonObject=new JsonObject();
             jsonObject.addProperty("success","id_not_already_taken");
             return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
@@ -61,5 +65,9 @@ public class UserRegirstrationController {
             jsonObject.addProperty("success","id_already_taken");
             return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.OK);
         }
+    }
+
+    private boolean checkAvailability(String email){
+       return _userDetailsService.FindByEmail(email);
     }
 }
