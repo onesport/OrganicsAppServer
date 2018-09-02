@@ -53,8 +53,8 @@ public class UserRegirstrationController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
-    @RequestMapping(value = "/checkuseravailability/{email}", method = RequestMethod.GET)
-    public ResponseEntity<String> checkIfUserIdIsAvailable(@PathVariable String email){
+    @RequestMapping(value = "/checkuseravailability", method = RequestMethod.GET)
+    public ResponseEntity<String> checkIfUserIdIsAvailable(@RequestParam(value = "email")String email){
 
         if(checkAvailability(email)){
             JsonObject jsonObject=new JsonObject();

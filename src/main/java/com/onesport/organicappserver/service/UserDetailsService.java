@@ -5,6 +5,8 @@ import com.onesport.organicappserver.repository.UserDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserDetailsService {
     @Autowired
@@ -20,7 +22,7 @@ public class UserDetailsService {
     }
 
     public Boolean FindByEmail(String email){
-        UserDetailsEntity _userDetails =  _userDetailsRepository.findByEmail(email);
+        List<UserDetailsEntity> _userDetails =  _userDetailsRepository.findByEmail(email);
 
         if(_userDetails ==null){
             return true;
