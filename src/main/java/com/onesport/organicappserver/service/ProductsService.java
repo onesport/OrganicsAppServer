@@ -10,12 +10,12 @@ public class ProductsService {
     @Autowired
     private ProductsRepository _productsRepository;
 
-    public Integer SaveProducts(ProductsEntity products){
+    public Integer saveProducts(ProductsEntity products){
         ProductsEntity _products =  _productsRepository.save(products);
 
         if(_products !=null){
-            return 1;
+            return _products.getProductId();
         }
-        return 0;
+        return null;
     }
 }

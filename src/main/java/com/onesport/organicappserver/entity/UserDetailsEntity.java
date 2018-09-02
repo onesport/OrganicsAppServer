@@ -4,7 +4,10 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "userdetails")
-@NamedQuery(name = "UserDetailsEntity.findAll", query = "SELECT d FROM UserDetailsEntity d")
+@org.hibernate.annotations.NamedQueries({
+        @org.hibernate.annotations.NamedQuery(name = "UserDetailsEntity.findAll", query = "SELECT d FROM UserDetailsEntity d"),
+        @org.hibernate.annotations.NamedQuery(name = "UserDetailsEntity.findByEmail", query = "SELECT u FROM UserDetailsEntity u WHERE u.email = :email")
+})
 public class UserDetailsEntity {
 
     @Id
@@ -50,6 +53,6 @@ public class UserDetailsEntity {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "phoneno")
+    @Column(name = "phone_no")
     private String phoneno;
 }
