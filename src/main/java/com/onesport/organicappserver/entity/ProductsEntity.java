@@ -4,9 +4,14 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "products")
-@NamedQuery(name = "ProductsEntity.findAll", query = "SELECT d FROM ProductsEntity d")
+@org.hibernate.annotations.NamedQueries({
+@org.hibernate.annotations.NamedQuery(name = "ProductsEntity.findAll", query = "SELECT d FROM ProductsEntity d"),
+@org.hibernate.annotations.NamedQuery(name = "ProductsEntity.getAllProducts", query = "SELECT u FROM ProductsEntity u WHERE u.productstatus = :status")
+})
 public class ProductsEntity {
-
+    public enum ProductAvailability{
+        AVAILABLE,OUTOFSTOCK,WITHDRAWN
+    }
     @Id
     @Column(name = "productid")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -16,7 +21,8 @@ public class ProductsEntity {
     private String productname;
 
     @Column(name = "productstatus")
-    private String productstatus;
+    @Enumerated(EnumType.STRING)
+    private ProductAvailability productstatus;
 
     public Integer getProductId() {
         return productId;
@@ -34,11 +40,11 @@ public class ProductsEntity {
         this.productname = productname;
     }
 
-    public String getProductstatus() {
+    public ProductAvailability getProductstatus() {
         return productstatus;
     }
 
-    public void setProductstatus(String productstatus) {
+    public void setProductstatus(ProductAvailability productstatus) {
         this.productstatus = productstatus;
     }
 
@@ -53,3 +59,14 @@ public class ProductsEntity {
     @Column(name = "productdescription")
     private String productdescription;
 }
+
+    //    INSERT INTO products (productname, productstatus,productdescription) VALUES ('oil','OUTOFSTOCK','hai');
+//    public static String createProductsTableQuery(){
+//        return "create table products(" +
+//                "   productid INT NOT NULL AUTO_INCREMENT," +
+//                "   productname VARCHAR(50) NOT NULL," +
+//                "   productstatus enum('AVAILABLE','OUTOFSTOCK','WITHDRAWN') default 'AVAILABLE'," +
+//                "   productdescription VARCHAR(1000) NOT NULL," +
+//                "   PRIMARY KEY (productid)" +
+//                ");";
+//    }
