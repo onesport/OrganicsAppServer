@@ -6,7 +6,9 @@ import com.google.gson.JsonObject;
 import com.onesport.organicappserver.entity.UserDetailsEntity;
 import com.onesport.organicappserver.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,18 +36,24 @@ public class UserRegirstrationController {
         try(Reader targetReader = new InputStreamReader(is)) {
             Gson gson = new GsonBuilder().create();
             UserDetailsEntity userDetails =gson.fromJson(targetReader,UserDetailsEntity.class);
-            Integer result = 0;
+            UserDetailsEntity result = null;
 
             if(checkAvailability(userDetails.getEmail())){
-                result = _userDetailsService.SaveUserDetails(userDetails);
+                result = _userDetailsService.saveUserDetails(userDetails);
+            }else {
+                JsonObject jsonObject=new JsonObject();
+                jsonObject.addProperty("error","user ID is already registered");
+                return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            if(result!=0) {
+            if(result!=null) {
                 JsonObject jsonObject=new JsonObject();
-                jsonObject.addProperty("success",result);
+                jsonObject.addProperty("success",result.getUserId());
                 return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.OK);
             }else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                JsonObject jsonObject=new JsonObject();
+                jsonObject.addProperty("error","unable to do registration");
+                return new ResponseEntity<String>(jsonObject.toString(),HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (java.io.IOException e) {
             e.printStackTrace();

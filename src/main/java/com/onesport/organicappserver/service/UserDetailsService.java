@@ -6,27 +6,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserDetailsService {
     @Autowired
     private UserDetailsRepository _userDetailsRepository;
 
-    public Integer SaveUserDetails(UserDetailsEntity userDetails){
-        UserDetailsEntity _userDetails =  _userDetailsRepository.save(userDetails);
-
-        if(_userDetails !=null){
-            return 1;
-        }
-        return 0;
+    public UserDetailsEntity saveUserDetails(UserDetailsEntity userDetails){
+        return _userDetailsRepository.save(userDetails);
     }
 
     public Boolean FindByEmail(String email){
         List<UserDetailsEntity> _userDetails =  _userDetailsRepository.findByEmail(email);
 
-        if(_userDetails ==null){
+        if(_userDetails.size() <=0){
             return true;
         }
         return false;
+    }
+
+    public Optional<UserDetailsEntity> findbyUserId(Integer userid){
+        return  _userDetailsRepository.findById(userid);
     }
 }
